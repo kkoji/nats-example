@@ -1,0 +1,26 @@
+version: '3'
+services:
+  publisher:
+    build: .
+    volumes:
+      - ./publisher:/app
+      # モジュールのダウンロード速度を上げるためにキャッシュを共有しておく
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+    working_dir: /app
+    env_file:
+      - .env
+    ports:
+      - 5001:5000
+
+  subscriber:
+    build: .
+    volumes:
+      - ./subscriber:/app
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+    working_dir: /app
+    env_file:
+      - .env
+
+  nats:
+    image: nats-streaming:0.11.2
+    restart: on-failure
